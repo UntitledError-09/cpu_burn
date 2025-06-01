@@ -1,0 +1,45 @@
+# Build directories
+build/
+install/
+_build/
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+compile_commands.json
+Makefile
+*.cmake
+!cmake/*.cmake
+
+# Spack files
+.spack-env/
+spack-build-*
+
+# Compiled binaries and libraries
+*.o
+*.so
+*.so.*
+*.a
+*.out
+*.exe
+*.dll
+*.dylib
+
+# OS specific files
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# IDE files
+.vscode/
+.cache/
+.idea/
+*.kdev4
+.project
+.cproject
+
+# Editor backup files
+*.bak
+*.backup

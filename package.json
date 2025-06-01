@@ -1,0 +1,21 @@
+{
+  "name": "cpu_burn",
+  "version": "1.0.0",
+  "description": "CPU stress testing and power measurement tool",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UntitledError-09/cpu_burn.git"
+  },
+  "keywords": [
+    "cpu",
+    "benchmark",
+    "power",
+    "rapl"
+  ],
+  "author": "Harish Rohan Kambhampaty",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/UntitledError-09/cpu_burn/issues"
+  },
+  "homepage": "https://github.com/UntitledError-09/cpu_burn#readme"
+}
