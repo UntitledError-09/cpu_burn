@@ -73,6 +73,16 @@ install(EXPORT cpu_burn-targets
 
 # Create and install config files
 include(CMakePackageConfigHelpers)
+
+# Define variables needed for packages depending on cpu_burn
+set(CPU_BURN_CMAKE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/cpu_burn" CACHE STRING
+  "Installation directory for cmake files, relative to ${CMAKE_INSTALL_PREFIX}.")
+set(CPU_BURN_INCLUDE_DIR "${CMAKE_INSTALL_INCLUDEDIR}" CACHE STRING
+  "Installation directory for header files, relative to ${CMAKE_INSTALL_PREFIX}.")
+set(CPU_BURN_LIBRARY_DIR "${CMAKE_INSTALL_LIBDIR}" CACHE STRING
+  "Installation directory for libraries, relative to ${CMAKE_INSTALL_PREFIX}.")
+    
+# Configure the config file using our template
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/cpu_burn-config.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/cpu_burn-config.cmake
