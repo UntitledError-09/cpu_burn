@@ -4,13 +4,19 @@
 cmake_minimum_required(VERSION 3.14)
 project(cpu_burn VERSION 1.0.0 
         LANGUAGES CXX
-        DESCRIPTION "CPU stress testing and power measurement tool"
+        DESCRIPTION "CPU stress testing tool that performs DGEMM operations using OpenBLAS"
         HOMEPAGE_URL "https://github.com/UntitledError-09/cpu_burn")
 
 # Set C++20 standard
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+# Configure RPATH settings
+set(CMAKE_SKIP_BUILD_RPATH FALSE)
+set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 # Define installation directories according to GNU standards
 include(GNUInstallDirs)
@@ -44,11 +50,17 @@ target_include_directories(cpu_burn PRIVATE ${OpenBLAS_INCLUDE_DIRS})
 set_target_properties(cpu_burn PROPERTIES
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR}
+    # Explicitly state the output name to ensure consistency
+    OUTPUT_NAME "cpu_burn"
 )
 
 # Add executable target
 add_executable(cpu_burn_exe src/main.cpp)
-set_target_properties(cpu_burn_exe PROPERTIES OUTPUT_NAME cpu_burn)
+set_target_properties(cpu_burn_exe PROPERTIES 
+    OUTPUT_NAME cpu_burn
+    INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}"
+    BUILD_WITH_INSTALL_RPATH TRUE
+)
 target_link_libraries(cpu_burn_exe PRIVATE cpu_burn)
 
 # Install targets
@@ -74,20 +86,24 @@ install(EXPORT cpu_burn-targets
 # Create and install config files
 include(CMakePackageConfigHelpers)
 
-# Define variables needed for packages depending on cpu_burn
-set(CPU_BURN_CMAKE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/cpu_burn" CACHE STRING
-  "Installation directory for cmake files, relative to ${CMAKE_INSTALL_PREFIX}.")
-set(CPU_BURN_INCLUDE_DIR "${CMAKE_INSTALL_INCLUDEDIR}" CACHE STRING
-  "Installation directory for header files, relative to ${CMAKE_INSTALL_PREFIX}.")
-set(CPU_BURN_LIBRARY_DIR "${CMAKE_INSTALL_LIBDIR}" CACHE STRING
-  "Installation directory for libraries, relative to ${CMAKE_INSTALL_PREFIX}.")
-    
+# Define variables needed for packages depending on cpu_burn - use full paths
+set(CPU_BURN_CMAKE_DIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/cmake/cpu_burn" CACHE STRING
+  "Installation directory for cmake files")
+set(CPU_BURN_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}" CACHE STRING
+  "Installation directory for header files")
+set(CPU_BURN_LIBRARY_DIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}" CACHE STRING
+  "Installation directory for libraries")
+
 # Configure the config file using our template
-configure_file(
+configure_package_config_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/cpu_burn-config.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/cpu_burn-config.cmake
-    @ONLY
+    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/cpu_burn
+    PATH_VARS 
+        CPU_BURN_INCLUDE_DIR
+        CPU_BURN_LIBRARY_DIR
 )
+
 write_basic_package_version_file(
     ${CMAKE_CURRENT_BINARY_DIR}/cpu_burn-config-version.cmake
     VERSION ${PROJECT_VERSION}
@@ -100,3 +116,9 @@ install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/cpu_burn-config-version.cmake
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/cpu_burn
 )
+
+# Print debug info about paths
+message(STATUS "CPU_BURN_CMAKE_DIR: ${CPU_BURN_CMAKE_DIR}")
+message(STATUS "CPU_BURN_INCLUDE_DIR: ${CPU_BURN_INCLUDE_DIR}")
+message(STATUS "CPU_BURN_LIBRARY_DIR: ${CPU_BURN_LIBRARY_DIR}")
+message(STATUS "RPATH settings: ${CMAKE_INSTALL_RPATH}")

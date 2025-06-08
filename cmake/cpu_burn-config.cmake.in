@@ -18,4 +18,9 @@ set(cpu_burn_LIBRARIES cpu_burn::cpu_burn)
 # Find dependencies
 find_package(OpenBLAS REQUIRED)
 
+# Ensure backwards compatibility
+if(NOT TARGET cpu_burn AND TARGET cpu_burn::cpu_burn)
+    add_library(cpu_burn ALIAS cpu_burn::cpu_burn)
+endif()
+
 check_required_components(cpu_burn)
